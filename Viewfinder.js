@@ -1,28 +1,13 @@
-import React, {
-  Component,
-  } from 'react';
-import {
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native';
-
+import React, { Component } from 'react';
+import { StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
+
 class Viewfinder extends Component {
   constructor(props) {
     super(props);
 
-    this.getBackgroundColor = this.getBackgroundColor.bind(this);
     this.getSizeStyles = this.getSizeStyles.bind(this);
     this.getEdgeSizeStyles = this.getEdgeSizeStyles.bind(this);
-    this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
-  }
-
-  getBackgroundColor() {
-    return ({
-      backgroundColor: this.props.backgroundColor,
-    });
   }
 
   getEdgeColor() {
@@ -45,24 +30,10 @@ class Viewfinder extends Component {
     });
   }
 
-  renderLoadingIndicator() {
-    if (!this.props.isLoading) {
-      return null;
-    }
-
-    return (
-      <ActivityIndicator
-        animating={this.props.isLoading}
-        color={this.props.color}
-        size='large'
-      />
-    );
-  }
-
   render() {
     return (
-      <View style={[styles.container, this.getBackgroundColor()]}>
-        <View style={[styles.viewfinder, this.getBackgroundColor(), this.getSizeStyles()]}>
+      <View style={styles.container}>
+        <View style={[styles.viewfinder, this.getSizeStyles()]}>
           <View style={[
             this.getEdgeColor(),
             this.getEdgeSizeStyles(),
@@ -81,7 +52,6 @@ class Viewfinder extends Component {
               borderTopWidth: this.props.borderWidth,
             }
           ]} />
-          {this.renderLoadingIndicator()}
           <View style={[
             this.getEdgeColor(),
             this.getEdgeSizeStyles(),
@@ -135,10 +105,12 @@ var styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
+    backgroundColor: 'transparent'
   },
   viewfinder: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'transparent'
   },
   topLeftEdge: {
     position: 'absolute',

@@ -1,14 +1,7 @@
 'use strict';
 
-import React, {
-  Component,
-} from 'react';
-import {
-  requireNativeComponent,
-  PermissionsAndroid,
-  View,
-} from 'react-native';
-
+import React, { Component } from 'react';
+import { requireNativeComponent, PermissionsAndroid, View, Text, Platform } from 'react-native';
 import Viewfinder from './Viewfinder';
 import PropTypes from 'prop-types';
 
@@ -23,17 +16,19 @@ class BarcodeScannerView extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
-  componentWillMount() {
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-      title: this.props.permissionDialogTitle,
-      message: this.props.permissionDialogMessage,
-    }).then(granted => {
-      const isAuthorized =
-        Platform.Version >= 23
-          ? granted === PermissionsAndroid.RESULTS.GRANTED
-          : granted === true;
-      this.setState({ isAuthorized, isAuthorizationChecked: true });
-    });
+  componentDidMount() {
+    if (Platform.OS === 'android' && !this.state.isAuthorizationChecked && !this.state.isAuthorized) {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+        title: this.props.permissionDialogTitle,
+        message: this.props.permissionDialogMessage,
+      }).then(granted => {
+        const isAuthorized =
+          Platform.Version >= 23
+            ? granted === PermissionsAndroid.RESULTS.GRANTED
+            : granted === true;
+        this.setState({ isAuthorized, isAuthorizationChecked: true });
+      });
+    }
   }
 
   onChange(event) {
@@ -144,7 +139,7 @@ BarcodeScannerView.defaultProps = {
   ),
 };
 
-var RNBarcodeScannerView = requireNativeComponent('RNBarcodeScannerView', BarcodeScannerView, {
+const RNBarcodeScannerView = requireNativeComponent('RNBarcodeScannerView', BarcodeScannerView, {
   nativeOnly: { onChange: true }
 });
 
