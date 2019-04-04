@@ -87,7 +87,7 @@ Viewfinder.propTypes = {
 };
 
 Viewfinder.defaultProps = {
-  backgroundColor: 'transparent',
+  backgroundColor: 'rgba(0,0,0,0)',
   borderWidth: 2,
   borderLength: 30,
   color: 'white',
@@ -105,12 +105,12 @@ var styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'transparent'
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   viewfinder: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   topLeftEdge: {
     position: 'absolute',

@@ -13,7 +13,6 @@ class BarcodeScannerView extends Component {
       isAuthorizationChecked: false
     }
     this.disableScan = false;
-    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
@@ -31,19 +30,17 @@ class BarcodeScannerView extends Component {
     }
   }
 
-  onChange(event) {
-    if (!this.props.onBarCodeRead) {
-      return;
-    }
-    if (!this.disableScan) {
-      this.disableScan = true;
-      setTimeout(() => {
-        this.props.onBarCodeRead({
-          type: event.nativeEvent.type,
-          data: event.nativeEvent.data,
-        });
-        this.disableScan = false;
-      }, this.props.reactivateTimeout);
+  onChange = (event) => {
+    if (!this.props.onBarCodeRead) return;
+    if (event && event.nativeEvent && event.nativeEvent.data) {
+      const { type, data } = event.nativeEvent;
+      if (!this.disableScan) {
+        this.disableScan = true;
+        setTimeout(() => {
+          this.props.onBarCodeRead({ type, data });
+          this.disableScan = false;
+        }, this.props.reactivateTimeout);
+      }
     }
   }
 
@@ -53,7 +50,7 @@ class BarcodeScannerView extends Component {
       notAuthorizedView, pendingAuthorizationView,
       viewFinderBackgroundColor, viewFinderBorderColor, viewFinderBorderWidth,
       viewFinderBorderLength, viewFinderHeight, viewFinderShowLoadingIndicator,
-      viewFinderWidth
+      viewFinderWidth, customMarker
     } = this.props;
     if (isAuthorized) {
       let viewFinder = this.props.showViewFinder ? (
@@ -70,7 +67,7 @@ class BarcodeScannerView extends Component {
       return (
         <RNBarcodeScannerView {...this.props} onChange={this.onChange}>
           <View style={this.props.style} collapsable={false}>
-            {viewFinder}
+            {customMarker || viewFinder}
             {this.props.children}
           </View>
         </RNBarcodeScannerView>
