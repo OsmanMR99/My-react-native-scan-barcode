@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 import {
   requireNativeComponent,
-  StyleSheet,
+  PermissionsAndroid,
   View,
 } from 'react-native';
 
@@ -15,41 +15,76 @@ import PropTypes from 'prop-types';
 class BarcodeScannerView extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      isAuthorized: false,
+      isAuthorizationChecked: false
+    }
+    this.disableScan = false;
     this.onChange = this.onChange.bind(this);
+  }
+
+  componentWillMount() {
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+      title: this.props.permissionDialogTitle,
+      message: this.props.permissionDialogMessage,
+    }).then(granted => {
+      const isAuthorized =
+        Platform.Version >= 23
+          ? granted === PermissionsAndroid.RESULTS.GRANTED
+          : granted === true;
+      this.setState({ isAuthorized, isAuthorizationChecked: true });
+    });
   }
 
   onChange(event) {
     if (!this.props.onBarCodeRead) {
       return;
     }
-
-    this.props.onBarCodeRead({
-      type: event.nativeEvent.type,
-      data: event.nativeEvent.data,
-    });
+    if (!this.disableScan) {
+      this.disableScan = true;
+      setTimeout(() => {
+        this.props.onBarCodeRead({
+          type: event.nativeEvent.type,
+          data: event.nativeEvent.data,
+        });
+        this.disableScan = false;
+      }, this.props.reactivateTimeout);
+    }
   }
 
   render() {
-    let viewFinder = this.props.showViewFinder ? (
-      <Viewfinder
-        backgroundColor={this.props.viewFinderBackgroundColor}
-        color={this.props.viewFinderBorderColor}
-        borderWidth={this.props.viewFinderBorderWidth}
-        borderLength={this.props.viewFinderBorderLength}
-        height={this.props.viewFinderHeight}
-        isLoading={this.props.viewFinderShowLoadingIndicator}
-        width={this.props.viewFinderWidth}
-      />
-    ) : null;
-    return (
-      <RNBarcodeScannerView {...this.props} onChange={this.onChange}>
-        <View style={this.props.style} collapsable={false}>
-          {viewFinder}
-          {this.props.children}
-        </View>
-      </RNBarcodeScannerView>
-    );
+    const { isAuthorizationChecked, isAuthorized } = this.state;
+    const {
+      notAuthorizedView, pendingAuthorizationView,
+      viewFinderBackgroundColor, viewFinderBorderColor, viewFinderBorderWidth,
+      viewFinderBorderLength, viewFinderHeight, viewFinderShowLoadingIndicator,
+      viewFinderWidth
+    } = this.props;
+    if (isAuthorized) {
+      let viewFinder = this.props.showViewFinder ? (
+        <Viewfinder
+          backgroundColor={viewFinderBackgroundColor}
+          color={viewFinderBorderColor}
+          borderWidth={viewFinderBorderWidth}
+          borderLength={viewFinderBorderLength}
+          height={viewFinderHeight}
+          isLoading={viewFinderShowLoadingIndicator}
+          width={viewFinderWidth}
+        />
+      ) : null;
+      return (
+        <RNBarcodeScannerView {...this.props} onChange={this.onChange}>
+          <View style={this.props.style} collapsable={false}>
+            {viewFinder}
+            {this.props.children}
+          </View>
+        </RNBarcodeScannerView>
+      );
+    } else if (!isAuthorizationChecked) {
+      return pendingAuthorizationView;
+    } else {
+      return notAuthorizedView;
+    }
   }
 }
 
@@ -68,11 +103,49 @@ BarcodeScannerView.propTypes = {
 };
 
 BarcodeScannerView.defaultProps = {
+  reactivateTimeout: 800,
   showViewFinder: true,
+  cameraType: 'back',
+  notAuthorizedView: (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: 16,
+        }}
+      >
+        Camera not authorized
+        </Text>
+    </View>
+  ),
+  pendingAuthorizationView: (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: 16,
+        }}
+      >
+        ...
+        </Text>
+    </View>
+  ),
 };
 
 var RNBarcodeScannerView = requireNativeComponent('RNBarcodeScannerView', BarcodeScannerView, {
-  nativeOnly: {onChange: true}
+  nativeOnly: { onChange: true }
 });
 
 module.exports = BarcodeScannerView;
