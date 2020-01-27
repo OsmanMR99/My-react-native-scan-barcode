@@ -49,10 +49,22 @@ class BarcodeScannerView extends Component {
       notAuthorizedView, pendingAuthorizationView, customMarker
     } = this.props;
     if (isAuthorized) {
+      let viewFinder = this.props.showViewFinder ? (
+        <Viewfinder
+          backgroundColor={viewFinderBackgroundColor}
+          color={viewFinderBorderColor}
+          borderWidth={viewFinderBorderWidth}
+          borderLength={viewFinderBorderLength}
+          height={viewFinderHeight}
+          isLoading={viewFinderShowLoadingIndicator}
+          width={viewFinderWidth}
+        />
+      ) : null;
+
       return (
         <RNBarcodeScannerView {...this.props} onChange={this.onChange}>
           <View style={this.props.style} collapsable={false}>
-            {customMarker || null}
+            {customMarker || viewFinder}
             {this.props.children}
           </View>
         </RNBarcodeScannerView>
