@@ -47,7 +47,10 @@ class BarcodeScannerView extends Component {
   render() {
     const { isAuthorizationChecked, isAuthorized } = this.state;
     const {
-      notAuthorizedView, pendingAuthorizationView, customMarker
+      notAuthorizedView, pendingAuthorizationView,
+      viewFinderBackgroundColor, viewFinderBorderColor, viewFinderBorderWidth,
+      viewFinderBorderLength, viewFinderHeight, viewFinderShowLoadingIndicator,
+      viewFinderWidth, customMarker
     } = this.props;
     if (isAuthorized) {
       let viewFinder = this.props.showViewFinder ? (
