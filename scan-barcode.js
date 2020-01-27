@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { requireNativeComponent, PermissionsAndroid, View, Text, Platform } from 'react-native';
 import PropTypes from 'prop-types';
+import Viewfinder from './Viewfinder';
 
 class BarcodeScannerView extends Component {
   constructor(props) {
