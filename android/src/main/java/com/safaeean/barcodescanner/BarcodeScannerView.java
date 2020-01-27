@@ -13,12 +13,18 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BarcodeScannerView extends FrameLayout implements Camera.PreviewCallback {
     private CameraPreview mPreview;
@@ -31,6 +37,11 @@ public class BarcodeScannerView extends FrameLayout implements Camera.PreviewCal
 
         mPreview = new CameraPreview(context, this);
         mMultiFormatReader = new MultiFormatReader();
+
+        Map<DecodeHintType, Object> hints = new HashMap<>();
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(BarcodeFormat.QR_CODE));
+
+        mMultiFormatReader.setHints(hints);
         this.addView(mPreview);
     }
 
