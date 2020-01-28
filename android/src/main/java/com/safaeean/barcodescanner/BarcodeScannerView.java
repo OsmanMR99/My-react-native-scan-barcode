@@ -23,6 +23,7 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,8 @@ public class BarcodeScannerView extends FrameLayout implements Camera.PreviewCal
         mMultiFormatReader = new MultiFormatReader();
 
         Map<DecodeHintType, Object> hints = new HashMap<>();
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(BarcodeFormat.QR_CODE));
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, Collections.singletonList(BarcodeFormat.QR_CODE));
+        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
         mMultiFormatReader.setHints(hints);
         this.addView(mPreview);
