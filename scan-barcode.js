@@ -12,7 +12,6 @@ class BarcodeScannerView extends Component {
       isAuthorized: false,
       isAuthorizationChecked: false
     }
-    this.disableScan = false;
   }
 
   componentDidMount() {
@@ -34,13 +33,7 @@ class BarcodeScannerView extends Component {
     if (!this.props.onBarCodeRead) return;
     if (event && event.nativeEvent && event.nativeEvent.data) {
       const { type, data } = event.nativeEvent;
-      if (!this.disableScan) {
-        this.disableScan = true;
-        setTimeout(() => {
-          this.props.onBarCodeRead({ type, data });
-          this.disableScan = false;
-        }, this.props.reactivateTimeout);
-      }
+      this.props.onBarCodeRead({ type, data });
     }
   }
 
